@@ -106,7 +106,7 @@ window.addEventListener( 'load', function() {
     t = tmpl;
   work.id = 'love-work';
   love.id = 'love-word';
-  love.textContent = decodeURIComponent(location.search.slice( 1 ) || 'LOVE');
+  love.textContent = decodeURIComponent(location.search.slice( 1 ).replace(/\+/g, ' ') || 'LOVE');
   love.setAttribute('contentEditable', true);
 	//love.setAttribute('type', 'text');
 	while ( n-- )
