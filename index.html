@@ -9,6 +9,124 @@
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
     <title>Laughingsun.GitHub.io</title>
+    <style>
+body, root, html {
+  position: absolute;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  border none 0px;
+  width: 100%;
+  height: 100%;
+}
+ring {
+	padding: 2px;
+	margin: 2px;
+	line-height: 2px;
+	display: inline-block;
+	border: 2px solid;
+	border-radius: 50%;
+	background-color: transparent;
+}
+div>ring {
+	position: absolute;
+}
+div>ring.left, div>ring.left ring {
+	border-color: red;
+}
+div>ring.right, div>ring.right ring {
+	border-color: blue;
+}
+body.paused>div>ring {
+	display: none;
+}
+body>div>label {
+  position: absolute;
+  margin-top: -0.6em;
+  font-size: 96pt;
+  font-size: 50vh;
+  text-align: center;
+  z-index: 10;
+  top: 50%;
+  left: 0px;
+  width: 100%;
+  text-stroke: 2px white;
+  -moz-text-stroke: 2px white;
+  -webkit-text-stroke: 2px white;
+  -o-text-stroke: 2px white;
+  -ms-text-stroke: 2px white;
+}
+</style><script>
+window.addEventListener( 'load', function() {
+	var body = document.body,
+		PI = Math.PI,
+    classNames = [ 'left', 'right' ],
+		cos = Math.cos,
+		sin = Math.sin,
+    hue2rgb = function (p, q, t){
+        if(t < 0) t += 1;
+        if(t > 1) t -= 1;
+        if(t < 1/6) return p + (q - p) * 6 * t;
+        if(t < 1/2) return q;
+        if(t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+        return p;
+    },
+    toRGB = function (h, s, l, a){
+      var r, g, b;
+      if(s == 0){
+          r = g = b = l; // achromatic
+      }else{
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      return ( a == null )
+        ? ('rgb(' + Math.round(r * 255) + ',' + Math.round(g * 255) + ',' + Math.round(b * 255) + ')')
+        : ('rgba(' + Math.round(r * 255) + ',' + Math.round(g * 255) + ',' + Math.round(b * 255) + ',' + a + ')')
+    },
+    work = body.appendChild( document.createElement( 'div' ) ),
+    love = work.appendChild( document.createElement( 'label' ) ),
+    list = [],
+    hue = 0,
+    lit = 0.25,
+    xm = window.innerWidth,
+    ym = window.innerHeight,
+    xh = xm / 2,
+    yh = ym / 2,
+    n = Math.max(xh, yh),
+    tmpl = document.createElement( 'ring' ),
+    t = tmpl;
+  love.textContent = 'LOVE';
+	while ( n-- ) t = t.appendChild( tmpl.cloneNode() );
+	n = classNames.length;
+	while (n--) {
+		list[n] = {
+			el: work.appendChild( t = tmpl.cloneNode( true ) ),
+			px: 0,
+			py: 0,
+			pa: (n&1) ? 0 : PI,
+			pd: 0.1,  //((n&1) ? PI : -PI) / 30,
+			dd: 1,
+			ds: 1
+		};
+    t.classList.add( classNames[n] );
+	}
+	setInterval( function () {
+		var i = list.length,
+			e, n, a, x, y;
+		while ( i-- ) {
+			n = (e = list[i]).el;
+			n.style.cssText = 'left:' + (xh - n.offsetWidth / 2 + (x = e.px + sin( a = (e.pa += e.pd) ) * (d = (e.dd += e.ds)))) + 'px; top: ' + (yh - n.offsetHeight / 2 + (y = e.py + cos( a ) * d)) + 'px;';
+      love.style.cssText = 'color:hsla(' + (hue = (hue + 10) % 360) + ', 100%, 25%, 0.6)';
+			if ( x < -xh || x >= xh || y < -yh || y >= yh )
+				e.ds = -e.ds;
+		}
+	}, 100 );
+	body.classList.remove( 'paused' );
+} )
+</script>
   </head>
 
   <body>
