@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title></title></head>
+    <style>
+body {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  border: none 0px;
+}
+
+.outer,
+.sidebyside {
+  display: inline-block;
+}
+
+.container {
+  border: solid 1px;
+  margin: 2px;
+}
+
+#cnv-container,
+#img-container {
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+}
+    </style>
+    <body>
+      <a id="ahref" style="display: none">url processor</a>
+      <div>
+        <pre id="http-log"></pre>
+      </div>
+      <div class="outer container"><div class="sidebyside container"><div id="cnv-container" class="container"><canvas id="cnv" width="400" height="400"></canvas></div><div id="cnv-label" class="container">canvas time ?</div></div><div class="sidebyside container"><div id="img-container" class="container"><img id="img" /></div><div id="img-label" class="container">image time ?</div></div><div id="xhr-label" class="container">XMLHttpRequest time ?</div></div>
+      <div>
+        <pre id="xhr-log"></pre>
+      </div>
+      <script>
+window.URL || (window.URL = window.webkitURL);
+
+var ahref = document.getElementById( "ahref" );
+var httpLog = [
+      document.getElementById( "http-log" ).textContent
+    ], 
+    xhrLog = [
+      document.getElementById( "xhr-log" ).textContent
+    ];
+
+var xhr = new XMLHttpRequest();
+xhr.open("HEAD", httpLog[httpLog.length] = location.href, true);
+xhr.onreadystatechange = function ( ) {
+  httpLog[httpLog.length] = "\nstatus: " + xhr.statusText + ' [' + xhr.status + '], readyState: ' + xhr.readyState;
+  if ( xhr.readyState  === XMLHttpRequest.HEADERS_RECEIVED ) {
+    httpLog[httpLog.length] = "\n" + xhr.getAllResponseHeaders( ).trim( )
+  }
+};
+xhr.onloadend = function ( ) {
+  document.getElementById( "http-log" ).textContent += httpLog.join('');
+};
+xhr.send( null );
+
+var imgurl = realpath( 'images/spritesheets/arno%20bitmaps/running-8c8r-96x96y-main.png' );
+var ctx = document.getElementById('cnv').getContext('2d');
+var img = document.getElementById('img');
+var xhr2 = new XMLHttpRequest();
+var xhrtime, cnvtime, imgtime;
+
+xhr2.open("GET", xhrLog[xhrLog.length] = imgurl, true);
+xhr2.responseType = "blob";
+xhr2.onload = function () {
+  xhrtime = performance.now() - xhrtime;
+  document.getElementById( 'xhr-label' ).textContent = "XMLHttpRequest time " + xhrtime + "ms";
+  URL.revokeObjectURL(img.src);
+  img.onload = function() {
+    imgtime = performance.now() - imgtime;
+    document.getElementById( 'img-label' ).textContent = "image time " + imgtime + "ms";
+    cnvtime = performance.now();
+    ctx.drawImage(img, 0, 0);
+    cnvtime = performance.now() - cnvtime; // really sync? anyway to authortively confirm it is not still drawing after this line
+    document.getElementById( 'cnv-label' ).textContent = "canvas time " + cnvtime + "ms";
+  }
+  imgtime = performance.now();
+  img.src = window.URL.createObjectURL(xhr2.response);
+};
+xhr2.onreadystatechange = function ( evt ) {
+  xhrLog[xhrLog.length] = "\nstatus: " + xhr2.statusText + ' [' + xhr2.status + '], readyState: ' + xhr2.readyState;
+  if ( xhr2.readyState  === XMLHttpRequest.HEADERS_RECEIVED ) {
+   xhrLog[xhrLog.length] = "\n" + xhr2.getAllResponseHeaders( ).trim( )
+  }
+};
+xhr2.onprogress = function ( evt ) {
+  if ( evt.lengthComputable ) {
+    xhrLog[xhrLog.length] = "\nprogress: " + evt.loaded + ' / ' + evt.total + ', readyState: ' + xhr2.readyState
+  }
+};
+xhr2.onloadend = function ( ) {
+  document.getElementById( "xhr-log" ).textContent = xhrLog.join('');
+};
+
+xhrtime = performance.now();
+xhr2.send(null);
+
+
+
+function realpath ( path ) {
+  ahref.href = path;
+  return ahref.href
+}
+    </script>
+  </body>
+</html>
