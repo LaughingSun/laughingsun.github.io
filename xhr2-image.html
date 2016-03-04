@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title></title></head>
+    <title>xhr2 image loading and rendering</title></head>
     <style>
 body {
   text-align: center;
@@ -38,6 +38,7 @@ body {
       </div>
       <script>
 window.URL || (window.URL = window.webkitURL);
+window.performance || (window.performance = window.Date);
 
 var ahref = document.getElementById( "ahref" );
 var httpLog = [
@@ -60,7 +61,7 @@ xhr.onloadend = function ( ) {
 };
 xhr.send( null );
 
-var imgurl = realpath( 'images/spritesheets/arno%20bitmaps/running-8c8r-96x96y-main.png' );
+var imgurl = realpath( 'images/test-pattern-400x400y.jpg' );
 var ctx = document.getElementById('cnv').getContext('2d');
 var img = document.getElementById('img');
 var xhr2 = new XMLHttpRequest();
