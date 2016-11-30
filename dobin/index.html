@@ -91,7 +91,8 @@ canvas#dobin {
 </form>
 </div><a id="link" href="./index.html">dough-binary</a><script type="text/javascript">
 
-var width = 0
+var URLRE = /^(?:[a-z]+:\w+(?:\.\w+)+(?::\d+)?\/\/)?(?:[\w.-]*\/)*[\w-]+(?:\.[\w-]+)+/
+    , width = 0
     , height = 0
     , query = parseQuery( )
     , base = parseInt( query.base || '10' )
@@ -16870,8 +16871,8 @@ function showOverlay ( ) {
   valEl.value = value.toString( base );
   document.querySelector( '#overlay #base' )
       .value = base;
-  'background' in query
-      && (document
+  'background' in query && URLRE
+      .test( query.background ) && (document
       .querySelector( '#overlay #background' )
       .value = query.background);
   
