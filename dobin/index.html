@@ -31,7 +31,8 @@ root, html, body {
 #overlay form>div {
   margin: 4px 0px;
 }
-#overlay select#base {
+#overlay select#base,
+#overlay input#background {
   font-size: 8pt;
   font-weight: bold;
 }
@@ -70,6 +71,8 @@ canvas#dobin {
     <option value="10">Decimal</option>
     <option value="16">Hexidecimal</option>
   </select>
+  <span>&nbsp;</span>
+  <input id="background" name="background" value="[default]" placeholder="none" />
 </div>
 <div>
   <input type="submit" value="display">
@@ -16832,9 +16835,12 @@ var width = 0
     , image = new Image
     ;
 
-canvas.style.backgroundImage = query.background
-    ? ['url(', query.background, ')'].join( '' )
-    : 'none';
+canvas.style.backgroundImage = ( 'background' in query
+    && query.background !== '[default]' )
+    ? ( query.background
+      ? ['url(', (query.background ), ')'].join( '' )
+      : 'none' )
+    : 'url(index.png)';
 document.querySelector( '#link' )
     .href = location.pathname;
 if ( isNaN( value ) || value < 0 ) {
@@ -16853,6 +16859,9 @@ function showOverlay ( ) {
   valEl.value = value.toString( base );
   document.querySelector( '#overlay #base' )
       .value = base;
+  document.querySelector( '#overlay #background' )
+      .value = ( 'background' in query )
+          ? query.background : '[default]';
   
   // show the overlay and select
   document.querySelector( '#overlay' )
