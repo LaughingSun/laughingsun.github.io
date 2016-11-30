@@ -20,13 +20,13 @@ root, html, body {
 #overlay {
   position: absolute;
   display: none;
-  top: 0px;
-  right: 0px;
-  bottom: 0px;
-  left: 0px;
+  top: 10px;
+  right: 10px;
+  left: 10px;
   margin: 0px;
   padding: 10px 20px;
   text-align: center;
+  background-color: rgba(255,255,255,0.75);
 }
 #overlay form>div {
   margin: 4px 0px;
@@ -38,8 +38,8 @@ root, html, body {
 }
 #overlay input[type="submit"] {
   font-size: larger;
-  margin-top: 10px;
-  width: 50%;
+  margin-bottom: 10px;
+  min-width: 50%;
 }
 canvas#dobin {
   width: 100%;
@@ -55,6 +55,11 @@ canvas#dobin {
   right: 5px;
   bottom: 10px;
 }
+
+#overlay label {
+  font-style: italic;
+}
+
   </style>
   
 </head>
@@ -62,17 +67,23 @@ canvas#dobin {
 <h1>Enter a unsigned integer value</h1>
 <form method="GET">
 <div>
-  <input type="" id="value" name="value" />
+  <input type="text" id="value" name="value" pattern="^[0-9a-fA-F]+$" />
 </div>
 <div>
-  <select id="base" name="base">
+  <label for="base">base</label>&nbsp;<select id="base" name="base">
     <option value="2">Binary</option>
     <option value="8">Octal</option>
     <option value="10">Decimal</option>
     <option value="16">Hexidecimal</option>
   </select>
   <span>&nbsp;</span>
-  <input id="background" name="background" value="[default]" placeholder="none" />
+  <label for="background">background</label>&nbsp;<input type="text" id="background" name="background" value="" placeholder="none" list="some-images" />
+  <datalist id="some-images">
+    <option value="">[none]</option>
+    <option value="[default]">[default]</option>
+    <option value="hb-cake.png">birthday cake</option>
+    <option value="hb-donuts.png">birthday donuts</option>
+  </datalist>
 </div>
 <div>
   <input type="submit" value="display">
@@ -16835,12 +16846,12 @@ var width = 0
     , image = new Image
     ;
 
-canvas.style.backgroundImage = ( 'background' in query
-    && query.background !== '[default]' )
-    ? ( query.background
-      ? ['url(', (query.background ), ')'].join( '' )
-      : 'none' )
-    : 'url(index.png)';
+query.background
+    && (canvas.style.backgroundImage =
+    (query.background=='[default]') ? 'url(index.png)'
+    : query.background ? ['url(', (query.background )
+        ,  ')'].join( '' )
+    : 'none' )
 document.querySelector( '#link' )
     .href = location.pathname;
 if ( isNaN( value ) || value < 0 ) {
@@ -16859,9 +16870,10 @@ function showOverlay ( ) {
   valEl.value = value.toString( base );
   document.querySelector( '#overlay #base' )
       .value = base;
-  document.querySelector( '#overlay #background' )
-      .value = ( 'background' in query )
-          ? query.background : '[default]';
+  'background' in query
+      && (document
+      .querySelector( '#overlay #background' )
+      .value = query.background);
   
   // show the overlay and select
   document.querySelector( '#overlay' )
